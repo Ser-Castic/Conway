@@ -26,6 +26,27 @@ public class Main {
         return conway;
     }
 
+    private static void saveToFile(String[][] contents, String fileName) {
+        try {
+            FileWriter fw = new FileWriter(new File(fileName));
+
+            for (String[] line : contents) {
+                for (String s : line) {
+                    fw.write(s);
+                }
+
+                fw.write("\n");
+            }
+
+
+            fw.close();
+        }
+
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static String[][] deepArrayCopy(String[][] input) {
         String[][] copy = new String[input.length][input.length];
 
@@ -37,16 +58,83 @@ public class Main {
     }
 
     private static int getAliveNeighbors(String[][] array, int i, int j) {
-        // TODO: implement this
-        return 42;
+        int count = 0;
+
+        if (i > 0 && j > 0 && array[i - 1][j - 1].equals("1")) {
+            count++;
+        }
+
+        if (i > 0 && array[i - 1][j].equals("1")) {
+            count++;
+        }
+
+        if (i > 0 && j < array.length - 1 && array[i - 1][j + 1].equals("1")) {
+            count++;
+        }
+
+
+        if (j > 0 && array[i][j - 1].equals("1")) {
+            count++;
+        }
+
+        if (j < array.length - 1 && array[i][j + 1].equals("1")) {
+            count++;
+        }
+
+        if (i < array.length - 1 && j > 0 && array[i + 1][j - 1].equals("1")) {
+            count++;
+        }
+
+        if (i < array.length - 1 && array[i + 1][j].equals("1")) {
+            count++;
+        }
+
+        if (i < array.length - 1 && j < array.length - 1 && array[i + 1][j + 1].equals('1')) {
+            count++;
+        }
+
+        return count;
+    }
+
+    private static String[][] conway(String[][] original) {
+        String[][] copy = deepArrayCopy(original);
+
+        for (int i = 0;i < copy.length;i++) {
+            for (int j = 0; j < copy.length;j++) {
+                if (copy[i][j].equals("1")) {
+                    switch(getAliveNeighbors(original, i, j)) {
+                        case 0:
+                        case 1:
+                            copy[i][j] = "0";
+                            break;
+                        case 2:
+                        case 3:
+                            break;
+                        default:
+                            copy[i][j] = "0";
+                            break;
+                    }
+                } else {
+                    if (getAliveNeighbors(original, i, j) == 3) {
+                        copy[i][j] = "1";
+                    }
+                }
+            }
+        }
+
+        return copy;
     }
 
     public static void main(String[] args) throws IOException {
         // TODO: Implement this.
+        String[][] original = getFileContents("input.txt");
 
-        // note: you should be able to use Arrays.deepEquals to
-        // compare these arrays
+        for (int i = 0;i < 1000;i++) {
+           original = conway(original);
+        }
+
+
+        System.out.println(Arrays.deepEquals(original, getFileContents("output.txt")));
+//        saveToFile(original, "output.txt");
     }
-
-
 }
